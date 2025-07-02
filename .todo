@@ -1,0 +1,163 @@
+Phase 1: Complete the Core Gameplay Loop
+
+This is the absolute next step to make the game fully playable with a clear objective.
+
+    [ ] Implement Thirst & Water:
+
+        Add a thirst property to Player.ts.
+
+        Make thirst decrease daily in updateDailyMetrics. If thirst is 0, the player should take health damage.
+
+        Add a "Gather Water" action to at least one environment (like the starting Forest, for now).
+
+        Update player.useItem() to handle "Water" and restore the thirst stat.
+
+        Add a thirstText display to the UI in GameScene.ts.
+
+    [ ] Implement a Universal Action: "Rest"
+
+        Create a "Rest" action that is available in all environments.
+
+        Effect: The action consumes a turn/part of the day, restores a small amount of energy (e.g., 15-20), but makes the player slightly more hungry and thirsty. This provides a strategic trade-off.
+
+    [ ] Basic 30-Day Win Condition:
+
+        In the endDay function, add a check: if player.day reaches 30, trigger a transition to the GameOverScene with a "You Survived!" win message.
+
+Phase 2: Expand Environments & Content
+
+Once the core loop is solid, you can start building out the world.
+
+    [ ] Create a "Yosemite-Inspired" Environment Set:
+
+        Update Environment.ts with a small, curated set of new environments. Start with three common ones to create variety.
+
+            Common: Pine Forest, Meadow
+
+            Uncommon: Creek, Mountainside
+
+            Rare: Giant Sequoia Grove
+
+    [ ] Implement Environment-Specific Actions:
+
+        Meadow: Add a high chance of success for finding "Berries" and a chance for a random morale boost from "seeing wildlife."
+
+        Creek: Implement the "Cross Creek" action, which carries a risk of calling a new player.loseRandomItem() method on failure.
+
+        Mountainside: Implement the "Attempt Summit" action. For now, on success, it can simply move the player to a pre-determined "good" environment (like Meadow or Natural Spring). We'll add the "choice" UI later.
+
+    [ ] Create a Static Environment Path:
+
+        Instead of building the complex probability system right away, create a simple, fixed progression for the first 10-15 days. For example, discovering a new area from the Forest always leads to the Creek, which then leads to the Meadow, etc. This allows you to test content and flow without complex logic.
+
+Phase 3: Advanced Systems (Future Enhancements)
+
+These are the more complex systems you described. With the foundation built, these will be much easier to implement later.
+
+    [ ] Probabilistic Environment Generation:
+
+        Replace the static path with a weighted system. The next environment generated will be based on a probability table influenced by the current environment (e.g., 50% chance of Pine Forest after Mountainside) and the current day (e.g., mountainous areas become more common after Day 15).
+
+    [ ] Dynamic Event System:
+
+        Create a system that can trigger events based on conditions. This would manage the "Day 7 Lucky Find" and could be expanded for other story or random events.
+
+    [ ] Alternative Win Conditions:
+
+        Design and implement a way to win the game before Day 30. For example, finding a specific rare item in the Giant Sequoia Grove or successfully using a "Build Raft" action at the Lake could trigger an early victory.
+
+
+
+
+
+        
+
+=========
+OLD:
+
+
+
+
+organized to guide your development process.
+
+I. Core Gameplay & Day Cycle
+
+This section covers the main game structure and time-based events.
+
+    [ ] 30-Day Game Loop: Modify the endDay logic to check if player.day has reached 30, which will trigger the win condition.
+
+    [ ] Hardcoded Weekly Event: Implement a check in the endDay function. If (player.day % 7) === 0, trigger a "lucky find" event that adds a special item (e.g., 'Durable Backpack', 'Sturdy Fishing Rod') to the player's inventory.
+
+    [ ] Day 30 "Exit" Environment: Create a final, unique environment that only becomes available on Day 30, representing the player's escape and the win condition.
+
+II. New Stats & Player Mechanics
+
+These features add more depth to the player's survival needs.
+
+    [ ] Thirst Stat:
+
+        Add a thirst property to the Player class, initialized to 100.
+
+        In Player.updateDailyMetrics, decrease thirst each day. If thirst reaches 0, the player should take health damage.
+
+    [ ] Water Consumption:
+
+        Add 'Water' to the useItem switch-case in Player.ts to restore the thirst stat.
+
+    [ ] Random Item Loss:
+
+        Create a new method in the Player class, loseRandomItem(), that removes one random item from the inventory. This will be triggered by failing certain actions.
+
+III. Environment & Action Implementation
+
+This is the bulk of the new content. You'll need to add these new environments and actions to your Environment.ts file and handle their unique outcomes in GameScene.ts.
+
+    [ ] Forest Variety:
+
+        Create three new forest environments in ENVIRONMENTS: Pine Forest, Hemlock Grove, and Deciduous Forest. They can share some actions but have slightly different descriptions or success rates for foraging.
+
+    [ ] Water Source Environments:
+
+        Natural Spring: A safe environment with a "Gather Water" action that has a 100% success rate.
+
+        Creek:
+
+            Add a "Cross Creek" action. On failure, call the player.loseRandomItem() method.
+
+            Also includes "Gather Water" and "Fish" actions.
+
+        Lake:
+
+            A rich environment with high success rates for "Fish" and a higher chance of a "See Wildlife" morale boost event.
+
+    [ ] Hazardous Environments:
+
+        Rockfall: An environment where all actions have a passive energy cost increase (e.g., all energy_cost values are increased by 5 while in this zone). This can be handled in GameScene.performAction.
+
+    [ ] Mountainside Environment:
+
+        Add the Mountainside environment.
+
+        Create a new action: "Attempt Summit".
+
+            Success (75%): Triggers a new game state or UI popup that allows the player to choose their next destination from a list of adjacent environments.
+
+            Failure (25%): Displays a message like "The summit was unreachable due to thick clouds."
+
+IV. UI/UX Enhancements
+
+These are the front-end changes needed to support the new mechanics.
+
+    [ ] Display Thirst Stat: Add a thirstText element to GameScene.ts and update it in the updateUI method.
+
+    [ ] Environment Choice Screen: Design and implement the UI for when the player successfully summits the mountain. This will need to present buttons for each possible new environment and transition the player accordingly when one is chosen.
+
+V. Win/Loss Conditions
+
+Formalize the start and end of the game.
+
+    [ ] Win Condition: Reaching and completing an action in the "Exit Environment" on Day 30. Upon success, transition to a "You Survived!" version of the GameOverScene.
+
+    [ ] Loss Condition: The game ends when player.health reaches 0 (this is already implemented but is now part of the formal game design).
+
+

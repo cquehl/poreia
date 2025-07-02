@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 export class Player {
     health: number;
     hunger: number;
+    thirst: number;
     energy: number;
     morale: number;
     inventory: { [key: string]: number };
@@ -13,6 +14,7 @@ export class Player {
     constructor() {
         this.health = 100;
         this.hunger = 100;
+        this.thirst = 100;
         this.energy = 100;
         this.morale = 100;
         this.inventory = {};
@@ -28,6 +30,10 @@ export class Player {
     consumeFood(amount: number): void {
         this.hunger = Math.min(100, this.hunger + amount);
         console.log(`Hunger: ${this.hunger}`);
+    }
+
+     drinkWater(amount: number): void {
+        this.thirst = Math.min(100, this.thirst + amount);
     }
 
     useEnergy(amount: number): void {
@@ -58,6 +64,23 @@ export class Player {
         return false;
     }
 
+    useItem(itemName: string): boolean {
+        if (this.removeItem(itemName, 1)) {
+            switch (itemName) {
+                case 'Berries':
+                    this.consumeFood(20);
+                    return true;
+                case 'Fish':
+                    this.consumeFood(40);
+                    return true;
+                case 'Water':
+                    this.drinkWater(30);
+                    return true;
+            }
+        }
+        return false;
+    }
+
     updateDailyMetrics(): boolean {
         // Returns true if game should continue, false if game over
         this.day += 1;
@@ -65,13 +88,14 @@ export class Player {
         // Restore energy at the start of a new day
         this.energy = 100;
 
-        // Decrease other stats
-        this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 20));
+        // Decrease stats
+        this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 15));
+        this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(15, 20));
         this.morale = Math.max(0, this.morale - Phaser.Math.Between(5, 10));
 
-        if (this.hunger <= 0) {
-            this.takeDamage(5); // Take damage if starving
-        }
+        // Apply damage if stats are at zero
+        if (this.hunger <= 0) this.takeDamage(5);
+        if (this.thirst <= 0) this.takeDamage(10); // Thirst is more dangerous!
 
         console.log(`--- Day ${this.day} Update ---`);
         console.log(`Health: ${this.health}, Hunger: ${this.hunger}, Energy: ${this.energy}, Morale: ${this.morale}`);

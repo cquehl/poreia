@@ -24,10 +24,11 @@ export class Environment {
 export const ENVIRONMENTS: { [key: string]: Environment } = {
     "Forest": new Environment(
         "Forest",
-        "A dense forest, good for foraging.",
+        "A dense forest. You can hear a stream nearby.",
         {
-            "Forage for Food": { energy_cost: 15, success_rate: 70, result_item: 'Berries', quantity: 0 }, // Quantity needs to be a function or set later
-            "Gather Wood": { energy_cost: 10, success_rate: 90, result_item: 'Wood', quantity: 0 },
+            "Forage for Food": { energy_cost: 15, success_rate: 70, result_item: 'Berries' },
+            "Gather Wood": { energy_cost: 10, success_rate: 90, result_item: 'Wood' },
+            "Gather Water": { energy_cost: 5, success_rate: 95, result_item: 'Water' }, // Added action
             "Scout Ahead": { energy_cost: 20, success_rate: 60, result_event: 'Discover New Area' }
         }
     ),
@@ -35,9 +36,9 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
         "Riverbank",
         "A winding river, ideal for fishing.",
         {
-            "Fish": { energy_cost: 20, success_rate: 60, result_item: 'Fish', quantity: 0 },
-            "Collect Water": { energy_cost: 5, success_rate: 100, result_item: 'Water', quantity: 0 },
-            "Search for Rare Herbs": { energy_cost: 25, success_rate: 30, result_item: 'Herbs', quantity: 1 }
+            "Fish": { energy_cost: 20, success_rate: 60, result_item: 'Fish' },
+            "Collect Water": { energy_cost: 5, success_rate: 100, result_item: 'Water' },
+            "Search for Rare Herbs": { energy_cost: 25, success_rate: 30, result_item: 'Herbs' }
         }
     )
 };
@@ -49,6 +50,7 @@ export function getRandomActionQuantity(actionName: string): number {
         case "Gather Wood": return Phaser.Math.Between(2, 5);
         case "Fish": return Phaser.Math.Between(1, 2);
         case "Collect Water": return Phaser.Math.Between(1, 5);
+        case "Gather Water": return Phaser.Math.Between(1, 4)
         case "Search for Rare Herbs": return 1; // Fixed quantity for rare items
         default: return 1;
     }

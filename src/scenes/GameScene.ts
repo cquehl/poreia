@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Player } from '../game/Player';
-import { ActionProps, ENVIRONMENTS, getRandomActionQuantity } from '../game/Environment';
+import { ENVIRONMENTS, getRandomActionQuantity, ActionProps } from '../game/Environment';
 import { Colors } from '../main';
 
 export class GameScene extends Phaser.Scene {
@@ -10,28 +10,18 @@ export class GameScene extends Phaser.Scene {
     // UI Elements
     healthText!: Phaser.GameObjects.Text;
     hungerText!: Phaser.GameObjects.Text;
+    thirstText!: Phaser.GameObjects.Text; // New UI element
     energyText!: Phaser.GameObjects.Text;
     moraleText!: Phaser.GameObjects.Text;
-    inventoryText!: Phaser.GameObjects.Text;
     environmentText!: Phaser.GameObjects.Text;
-    messageBoxGraphics!: Phaser.GameObjects.Graphics;
     messageBoxText!: Phaser.GameObjects.Text;
 
-    // Use a group for action buttons for easier management
+    // UI Containers
     actionButtonContainer!: Phaser.GameObjects.Container;
-    endDayButtonContainer!: Phaser.GameObjects.Container;
-    sys: any;
-    add: any;
-    input: any;
-    scene: any;
+    inventoryContainer!: Phaser.GameObjects.Container;
 
     constructor() {
         super('GameScene');
-    }
-
-    preload() {
-        // Load assets here if you have images for background/buttons
-        // this.load.image('forest_bg', 'assets/images/forest_bg.png');
     }
 
     create() {
@@ -41,145 +31,114 @@ export class GameScene extends Phaser.Scene {
         this.player = new Player();
         this.currentMessage = `Welcome to the ${this.player.currentEnvironment}!`;
 
-        // --- Background Placeholder ---
-        this.add.graphics()
-            .fillStyle(0x1E501E, 1) // Dark Green
-            .fillRect(0, 0, screenWidth, screenHeight - 250);
+        this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, screenWidth, screenHeight - 250);
 
-        // --- UI Elements ---
-        // Player Stats Box
-        const statsBoxX = 20;
-        const statsBoxY = 20;
-        const statsBoxWidth = 250;
-        const statsBoxHeight = 150;
+        // --- UI Setup ---
+        this.createStatsBox(20, 20);
+        this.createInventoryBox(20, 180);
+        this.createMessageBox(320, screenHeight - 200, screenWidth - 350, 150);
+        this.createEndDayButton(screenWidth - 100, screenHeight - 60);
 
-        this.add.graphics()
-            .fillStyle(Colors.GRAY, 1)
-            .fillRoundedRect(statsBoxX, statsBoxY, statsBoxWidth, statsBoxHeight, 5);
-
-        this.healthText = this.add.text(statsBoxX + 10, statsBoxY + 10, '', { fontSize: '24px', color: '#FFFFFF' });
-        this.hungerText = this.add.text(statsBoxX + 10, statsBoxY + 40, '', { fontSize: '24px', color: '#FFFFFF' });
-        this.energyText = this.add.text(statsBoxX + 10, statsBoxY + 70, '', { fontSize: '24px', color: '#FFFFFF' });
-        this.moraleText = this.add.text(statsBoxX + 10, statsBoxY + 100, '', { fontSize: '24px', color: '#FFFFFF' });
-
-        // Inventory Box
-        const inventoryBoxX = 20;
-        const inventoryBoxY = statsBoxY + statsBoxHeight + 10;
-        const inventoryBoxWidth = 250;
-        const inventoryBoxHeight = 200;
-
-        this.add.graphics()
-            .fillStyle(Colors.GRAY, 1)
-            .fillRoundedRect(inventoryBoxX, inventoryBoxY, inventoryBoxWidth, inventoryBoxHeight, 5);
+        this.environmentText = this.add.text(screenWidth - 20, 20, '', { fontSize: '24px', color: '#FFFF00' }).setOrigin(1, 0);
         
-        this.add.text(inventoryBoxX + 10, inventoryBoxY + 10, 'Inventory:', { fontSize: '24px', color: '#FFFFFF' });
-        this.inventoryText = this.add.text(inventoryBoxX + 10, inventoryBoxY + 40, '', { fontSize: '20px', color: '#FFFFFF' });
+        this.actionButtonContainer = this.add.container(0, 0);
+        this.setupActionButtons();
 
-        // Environment Text
-        this.environmentText = this.add.text(screenWidth - 20, 20, '', { fontSize: '24px', color: '#FFFF00' })
-            .setOrigin(1, 0);
+        this.input.keyboard!.on('keydown-E', () => this.endDay());
+        this.updateUI();
+    }
 
-        // Message Box
-        const messageBoxX = 320;
-        const messageBoxY = screenHeight - 200;
-        const messageBoxWidth = screenWidth - 350;
-        const messageBoxHeight = 150;
+    createStatsBox(x: number, y: number) {
+        this.add.graphics().fillStyle(Colors.GRAY, 1).fillRoundedRect(x, y, 250, 150, 5);
+        this.healthText = this.add.text(x + 10, y + 10, '', { fontSize: '20px' });
+        this.hungerText = this.add.text(x + 10, y + 35, '', { fontSize: '20px' });
+        this.thirstText = this.add.text(x + 10, y + 60, '', { fontSize: '20px' });
+        this.energyText = this.add.text(x + 10, y + 85, '', { fontSize: '20px' });
+        this.moraleText = this.add.text(x + 10, y + 110, '', { fontSize: '20px' });
+    }
 
-        this.messageBoxGraphics = this.add.graphics()
-            .fillStyle(Colors.LIGHT_GRAY, 1)
-            .fillRoundedRect(messageBoxX, messageBoxY, messageBoxWidth, messageBoxHeight, 5);
-        
-        this.messageBoxText = this.add.text(messageBoxX + 10, messageBoxY + 10, '', {
-            fontSize: '24px',
-            color: '#FFFFFF',
-            wordWrap: { width: messageBoxWidth - 20 }
-        });
+    createInventoryBox(x: number, y: number) {
+        this.add.graphics().fillStyle(Colors.GRAY, 1).fillRoundedRect(x, y, 250, 300, 5);
+        this.add.text(x + 10, y + 10, 'Inventory:', { fontSize: '24px' });
+        this.inventoryContainer = this.add.container(x + 10, y + 40);
+    }
 
-        this.updateUI(); // Initial UI update
+    createMessageBox(x: number, y: number, width: number, height: number) {
+        this.add.graphics().fillStyle(Colors.LIGHT_GRAY, 1).fillRoundedRect(x, y, width, height, 5);
+        this.messageBoxText = this.add.text(x + 10, y + 10, '', { fontSize: '24px', wordWrap: { width: width - 20 } });
+    }
 
-        // Initialize action button container BEFORE setting up buttons
-        this.actionButtonContainer = this.add.container(0, 0); 
-
-        // Set up dynamic action buttons
-        this.setupGameButtons();
-
-        // End Day button
+    createEndDayButton(x: number, y: number) {
         const endDayRect = this.add.rectangle(0, 0, 150, 70, Colors.GRAY);
-        const endDayText = this.add.text(0, 0, "End Day", {
-            fontFamily: 'Arial', fontSize: '24px', color: '#FFFFFF'
-        }).setOrigin(0.5);
-
-        this.endDayButtonContainer = this.add.container(screenWidth - 200, screenHeight - 100, [endDayRect, endDayText])
-            .setInteractive(new Phaser.Geom.Rectangle(0, 0, 150, 70), Phaser.Geom.Rectangle.Contains)
+        const endDayText = this.add.text(0, 0, "End Day", { fontSize: '24px' }).setOrigin(0.5);
+        this.add.container(x, y, [endDayRect, endDayText])
+            .setSize(150, 70).setInteractive({ useHandCursor: true })
             .on('pointerover', () => endDayRect.fillColor = Colors.LIGHT_GRAY)
             .on('pointerout', () => endDayRect.fillColor = Colors.GRAY)
             .on('pointerdown', () => this.endDay());
-
-        // Hotkey listeners
-        this.input.keyboard!.on('keydown-E', () => this.endDay());
-        // Add more hotkeys here, e.g., for specific actions needed a !
-        // this.input.keyboard.on!('keydown-F', () => this.performAction(...));
     }
 
-    updateUI(): void {
+    updateUI() {
         this.healthText.setText(`Health: ${this.player.health}%`);
         this.hungerText.setText(`Hunger: ${this.player.hunger}%`);
+        this.thirstText.setText(`Thirst: ${this.player.thirst}%`);
         this.energyText.setText(`Energy: ${this.player.energy}%`);
         this.moraleText.setText(`Morale: ${this.player.morale}%`);
-
-        let inventoryString = 'Inventory:\n';
-        for (const item in this.player.inventory) {
-            inventoryString += `  ${item}: ${this.player.inventory[item]}\n`;
-        }
-        this.inventoryText.setText(inventoryString);
-
         this.environmentText.setText(`Location: ${this.player.currentEnvironment} (Day: ${this.player.day})`);
         this.messageBoxText.setText(this.currentMessage);
+        this.updateInventoryUI();
     }
 
-    setupGameButtons(): void {
-        // Clear existing buttons from the container
-        this.actionButtonContainer.removeAll(true); // true to destroy children
+    updateInventoryUI() {
+        this.inventoryContainer.removeAll(true);
+        let yOffset = 0;
+        for (const itemName in this.player.inventory) {
+            const quantity = this.player.inventory[itemName];
+            if (quantity <= 0) continue;
 
+            const itemText = this.add.text(0, yOffset, `${itemName}: ${quantity}`, { fontSize: '20px' });
+            const useButton = this.add.text(150, yOffset, '[Use]', { fontSize: '20px', color: '#00FF00' })
+                .setInteractive({ useHandCursor: true })
+                .on('pointerdown', () => this.onUseItem(itemName));
+            
+            this.inventoryContainer.add([itemText, useButton]);
+            yOffset += 25;
+        }
+    }
+
+    onUseItem(itemName: string) {
+        if (this.player.useItem(itemName)) {
+            this.currentMessage = `You used 1 ${itemName}.`;
+            this.updateUI();
+        }
+    }
+
+    setupActionButtons() {
+        this.actionButtonContainer.removeAll(true);
         const screenHeight = this.sys.game.config.height as number;
         const currentEnv = ENVIRONMENTS[this.player.currentEnvironment];
-
-        let yOffset = screenHeight - 200; // Starting Y position for buttons
+        let yOffset = 50;
 
         for (const actionName in currentEnv.availableActions) {
             const actionProps = currentEnv.availableActions[actionName];
+            const buttonRect = this.add.rectangle(0, 0, 250, 60, Colors.BLUE);
+            const buttonText = this.add.text(0, 0, actionName, { fontSize: '24px' }).setOrigin(0.5);
+            const buttonContainer = this.add.container(450, yOffset, [buttonRect, buttonText]);
             
-            const buttonWidth = 250;
-            const buttonHeight = 60;
-            const buttonX = 50 + buttonWidth / 2; // Center X for the container
-            const buttonY = yOffset + buttonHeight / 2; // Center Y for the container
-
-            // Create a graphical rectangle for the button background
-            const buttonRect = this.add.rectangle(0, 0, buttonWidth, buttonHeight, Colors.BLUE);
-
-            // Create the text for the button
-            const buttonText = this.add.text(0, 0, actionName, {
-                fontFamily: 'Arial', fontSize: '24px', color: '#FFFFFF'
-            }).setOrigin(0.5);
-
-            // Create a container to group the rectangle and text
-            const buttonContainer = this.add.container(buttonX, buttonY, [buttonRect, buttonText]);
-            
-            // Make the container interactive. The hit area is the rectangle.
-            buttonContainer.setSize(buttonWidth, buttonHeight)
-                .setInteractive()
+            buttonContainer.setSize(250, 60)
+                .setInteractive({ useHandCursor: true })
                 .on('pointerover', () => buttonRect.fillColor = 0x000096)
                 .on('pointerout', () => buttonRect.fillColor = Colors.BLUE)
                 .on('pointerdown', () => this.performAction(actionName, actionProps));
-
-            this.actionButtonContainer.add(buttonContainer); // Add the container to our main action button container
-            yOffset += 80; // Spacing for the next button
+            
+            this.actionButtonContainer.add(buttonContainer);
+            yOffset += 70;
         }
     }
 
-    endDay(): void {
+    endDay() {
         if (!this.player.updateDailyMetrics()) {
-            this.currentMessage = "You succumbed to the wilderness... Game Over!";
+            this.currentMessage = "You succumbed to the wilderness...";
             this.scene.start('GameOverScene', { message: this.currentMessage });
         } else {
             this.currentMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
@@ -187,32 +146,28 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-        performAction(actionName: string, actionProps: ActionProps): void {
+    performAction(actionName: string, actionProps: ActionProps) {
         if (this.player.energy < actionProps.energy_cost) {
             this.currentMessage = "Not enough energy to perform this action!";
             this.updateUI();
             return;
         }
-
         this.player.useEnergy(actionProps.energy_cost);
-
-        const isSuccess = Phaser.Math.Between(1, 100) <= actionProps.success_rate;
-
-        if (isSuccess) {
+        if (Phaser.Math.Between(1, 100) <= actionProps.success_rate) {
             this.handleActionSuccess(actionName, actionProps);
         } else {
             this.currentMessage = `Action '${actionName}' failed.`;
         }
-        
         this.updateUI();
     }
 
-    /**
-     * Handles the logic for a successful action.
-     */
-    private handleActionSuccess(actionName: string, actionProps: ActionProps): void {
+    private handleActionSuccess(actionName: string, actionProps: ActionProps) {
         if (actionProps.result_item) {
-            this.handleItemResult(actionName, actionProps);
+            const item = actionProps.result_item;
+            const quantity = getRandomActionQuantity(actionName);
+            this.player.addItem(item, quantity);
+            this.currentMessage = `Success! You found ${quantity} ${item}(s).`;
+            if (actionName === 'Forage for Food') this.player.updateMorale(10);
         } else if (actionProps.result_event) {
             this.handleEventResult(actionProps);
         } else {
@@ -220,38 +175,20 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    /**
-     * Handles the result of an action that yields an item.
-     */
-    private handleItemResult(actionName: string, actionProps: ActionProps): void {
-        const item = actionProps.result_item!;
-        const quantity = getRandomActionQuantity(actionName);
-        this.player.addItem(item, quantity);
-        this.currentMessage = `Success! You found ${quantity} ${item}(s).`;
-
-        if (actionName === 'Forage for Food') {
-            this.player.updateMorale(10);
-        }
-    }
-
-    /**
-     * Handles the result of an action that triggers an event.
-     */
-    private handleEventResult(actionProps: ActionProps): void {
+    private handleEventResult(actionProps: ActionProps) {
         const event = actionProps.result_event!;
-        
         if (event === 'Discover New Area') {
             const availableEnvs = Object.keys(ENVIRONMENTS).filter(e => e !== this.player.currentEnvironment);
             if (availableEnvs.length > 0) {
                 const newEnv = Phaser.Math.RND.pick(availableEnvs);
                 this.player.currentEnvironment = newEnv;
-                this.setupGameButtons();
+                this.setupActionButtons();
                 this.currentMessage = `You discovered a new area: the ${newEnv}!`;
             } else {
                 this.currentMessage = "You found nowhere new to go.";
             }
         } else {
-            this.currentMessage = `Success! Event triggered: ${event} (Not fully implemented yet).`;
+            this.currentMessage = `Success! Event triggered: ${event}.`;
         }
     }
 }
