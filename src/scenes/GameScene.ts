@@ -124,11 +124,15 @@ export class GameScene extends Phaser.Scene {
 
         for (const actionName in currentEnv.availableActions) {
             const actionProps = currentEnv.availableActions[actionName];
-            const buttonRect = this.add.rectangle(0, 0, 250, 60, Colors.BLUE);
-            const buttonText = this.add.text(0, 0, actionName, { fontSize: '24px' }).setOrigin(0.5);
+            const buttonText = this.add.text(0, 0, actionName, { fontSize: '24px'}).setOrigin(0.5);
+            const buttonWidth = buttonText.width + 40;
+            const buttonHeigth = 60;
+
+            const buttonRect = this.add.rectangle(0, 0, buttonWidth, buttonHeigth, Colors.BLUE);
+            
             const buttonContainer = this.add.container(450, yOffset, [buttonRect, buttonText]);
             
-            buttonContainer.setSize(250, 60)
+            buttonContainer.setSize(buttonWidth, buttonHeigth)
                 .setInteractive({ useHandCursor: true })
                 .on('pointerover', () => buttonRect.fillColor = 0x000096)
                 .on('pointerout', () => buttonRect.fillColor = Colors.BLUE)

@@ -42,6 +42,8 @@ export const Colors = {
     DARK_GREEN: 0x006400, // 0, 100, 0
     RED: 0xC80000, // 200, 0, 0
     BLUE: 0x0000C8, // 0, 0, 200
+    DARK_BLUE: 0x00008B,    // A nice dark blue
+    DARKER_BLUE: 0x000061,  // For hover effect
     YELLOW: 0xFFFF00
 };
 

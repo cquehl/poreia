@@ -23,32 +23,44 @@ export class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Start Game Button
-        const startButton = this.add.rectangle(screenWidth / 2, screenHeight / 2, 200, 70, Colors.GREEN)
-            .setInteractive()
-            .on('pointerover', () => startButton.fillColor = Colors.DARK_GREEN)
-            .on('pointerout', () => startButton.fillColor = Colors.GREEN)
-            .on('pointerdown', () => this.scene.start('GameScene')); // Transition to GameScene
-
-        this.add.text(startButton.x, startButton.y, "Start Game", {
+        const startButtonText = this.add.text(0, 0, "Start Game", {
             fontFamily: 'Arial',
             fontSize: '48px',
             color: '#FFFFFF'
         }).setOrigin(0.5);
+
+
+        const startButtonWidth = startButtonText.width + 40;
+        const startButtonHeight = 70;
+        const startButtonRect = this.add.rectangle(0, 0, startButtonWidth, startButtonHeight, Colors.GREEN);
+
+        this.add.container(screenWidth / 2, screenHeight / 2, [startButtonRect, startButtonText])
+            .setSize(startButtonWidth, startButtonHeight)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => startButtonRect.fillColor = Colors.DARK_GREEN)
+            .on('pointerout', () => startButtonRect.fillColor = Colors.GREEN)
+            .on('pointerdown', () => this.scene.start('GameScene'));
+
 
         // Quit Button (will just log for web, as quitting browser is not standard)
-        const quitButton = this.add.rectangle(screenWidth / 2, screenHeight / 2 + 100, 200, 70, Colors.RED)
-            .setInteractive()
-            .on('pointerover', () => quitButton.fillColor = 0x960000) // Darker Red
-            .on('pointerout', () => quitButton.fillColor = Colors.RED)
-            .on('pointerdown', () => {
-                console.log("Quitting Game (in web, this typically closes the tab or does nothing)");
-                // You could add a "Thanks for playing" message or return to a landing page
-            });
-
-        this.add.text(quitButton.x, quitButton.y, "Quit", {
+        const quitButtonText = this.add.text(0, 0, "Quit", {
             fontFamily: 'Arial',
             fontSize: '48px',
             color: '#FFFFFF'
         }).setOrigin(0.5);
+
+        const quitButtonWidth = quitButtonText.width + 40;
+        const quitButtonHeight = 70;
+
+        const quitButtonRect = this.add.rectangle(0, 0, quitButtonWidth, quitButtonHeight, Colors.RED);
+        
+        this.add.container(screenWidth / 2, screenHeight / 2 + 100, [quitButtonRect, quitButtonText])
+            .setSize(quitButtonWidth, quitButtonHeight)
+            .setInteractive({ useHandCursor: true })
+            .on('pointerover', () => quitButtonRect.fillColor = 0x960000) // Darker Red
+            .on('pointerout', () => quitButtonRect.fillColor = Colors.RED)
+            .on('pointerdown', () => {
+                console.log("Quitting Game (in web, this typically closes the tab or does nothing)");
+            });
     }
 }
