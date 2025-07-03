@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-// Removed unused imports: import { Environment, ActionProps } from './Environment';
+import { Logger } from './Logger';
 
 export class Player {
     health: number;
@@ -20,35 +20,37 @@ export class Player {
         this.inventory = {};
         this.currentEnvironment = "Forest"; // Starting environment
         this.day = 1;
+        Logger.info('Player created');
     }
 
     takeDamage(amount: number): void {
         this.health = Math.max(0, this.health - amount);
-        console.log(`Health: ${this.health}`);
+        Logger.warn(`Player took ${amount} damage. Health is now ${this.health}`);
     }
 
     consumeFood(amount: number): void {
         this.hunger = Math.min(100, this.hunger + amount);
-        console.log(`Hunger: ${this.hunger}`);
+        Logger.info(`Hunger restored. Now at ${this.hunger}`);
     }
 
      drinkWater(amount: number): void {
         this.thirst = Math.min(100, this.thirst + amount);
+        Logger.info(`Thirst restored. Now at ${this.thirst}`);
     }
 
     useEnergy(amount: number): void {
         this.energy = Math.max(0, this.energy - amount);
-        console.log(`Energy: ${this.energy}`);
+        Logger.debug(`Energy used. Now at ${this.energy}`);
     }
 
     updateMorale(amount: number): void {
         this.morale = Math.min(100, this.morale + amount);
-        console.log(`Morale: ${this.morale}`);
+        Logger.info(`Morale updated. Now at ${this.morale}`);
     }
 
     addItem(itemName: string, quantity: number = 1): void {
         this.inventory[itemName] = (this.inventory[itemName] || 0) + quantity;
-        console.log(`Added ${quantity} ${itemName}(s). Inventory:`, this.inventory);
+        Logger.info(`Added ${quantity} ${itemName}(s).`, this.inventory);
     }
 
     removeItem(itemName: string, quantity: number = 1): boolean {
@@ -57,15 +59,16 @@ export class Player {
             if (this.inventory[itemName] === 0) {
                 delete this.inventory[itemName];
             }
-            console.log(`Removed ${quantity} ${itemName}(s). Inventory:`, this.inventory);
+            Logger.info(`Removed ${quantity} ${itemName}(s).`, this.inventory);
             return true;
         }
-        console.log(`Not enough ${itemName} in inventory.`);
+        Logger.warn(`Not enough ${itemName} in inventory to remove.`);
         return false;
     }
 
     useItem(itemName: string): boolean {
         if (this.removeItem(itemName, 1)) {
+            Logger.info(`Used ${itemName}.`);
             switch (itemName) {
                 case 'Berries':
                     this.consumeFood(20);
@@ -82,24 +85,19 @@ export class Player {
     }
 
     updateDailyMetrics(): boolean {
-        // Returns true if game should continue, false if game over
         this.day += 1;
-        
-        // Restore energy at the start of a new day
-        this.energy = 100;
+        this.energy = 100; // Restore energy at the start of a new day
 
-        // Decrease stats
         this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 15));
         this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(15, 20));
         this.morale = Math.max(0, this.morale - Phaser.Math.Between(5, 10));
 
-        // Apply damage if stats are at zero
         if (this.hunger <= 0) this.takeDamage(5);
-        if (this.thirst <= 0) this.takeDamage(10); // Thirst is more dangerous!
+        if (this.thirst <= 0) this.takeDamage(10);
 
-        console.log(`--- Day ${this.day} Update ---`);
-        console.log(`Health: ${this.health}, Hunger: ${this.hunger}, Energy: ${this.energy}, Morale: ${this.morale}`);
+        Logger.info(`--- Day ${this.day} Update ---`);
+        Logger.info(`Health: ${this.health}, Hunger: ${this.hunger}, Energy: ${this.energy}, Morale: ${this.morale}`);
 
-        return this.health > 0; // Game continues if health > 0
+        return this.health > 0;
     }
 }

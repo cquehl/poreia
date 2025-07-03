@@ -2,21 +2,20 @@ import Phaser from 'phaser';
 import { Player } from '../game/Player';
 import { ENVIRONMENTS, getRandomActionQuantity, ActionProps } from '../game/Environment';
 import { Colors } from '../main';
+import { Logger } from '../game/Logger';
 
 export class GameScene extends Phaser.Scene {
     player!: Player;
     currentMessage: string = "";
 
-    // UI Elements
     healthText!: Phaser.GameObjects.Text;
     hungerText!: Phaser.GameObjects.Text;
-    thirstText!: Phaser.GameObjects.Text; // New UI element
+    thirstText!: Phaser.GameObjects.Text;
     energyText!: Phaser.GameObjects.Text;
     moraleText!: Phaser.GameObjects.Text;
     environmentText!: Phaser.GameObjects.Text;
     messageBoxText!: Phaser.GameObjects.Text;
 
-    // UI Containers
     actionButtonContainer!: Phaser.GameObjects.Container;
     inventoryContainer!: Phaser.GameObjects.Container;
 
@@ -25,6 +24,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     create() {
+        Logger.info('GameScene creating...');
         const screenWidth = this.sys.game.config.width as number;
         const screenHeight = this.sys.game.config.height as number;
 
@@ -33,7 +33,6 @@ export class GameScene extends Phaser.Scene {
 
         this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, screenWidth, screenHeight - 250);
 
-        // --- UI Setup ---
         this.createStatsBox(20, 20);
         this.createInventoryBox(20, 180);
         this.createMessageBox(320, screenHeight - 200, screenWidth - 350, 150);
@@ -87,6 +86,7 @@ export class GameScene extends Phaser.Scene {
         this.environmentText.setText(`Location: ${this.player.currentEnvironment} (Day: ${this.player.day})`);
         this.messageBoxText.setText(this.currentMessage);
         this.updateInventoryUI();
+        Logger.debug('UI Updated');
     }
 
     updateInventoryUI() {
@@ -109,7 +109,10 @@ export class GameScene extends Phaser.Scene {
     onUseItem(itemName: string) {
         if (this.player.useItem(itemName)) {
             this.currentMessage = `You used 1 ${itemName}.`;
+            Logger.info(`Player used item: ${itemName}`);
             this.updateUI();
+        } else {
+            Logger.warn(`Player failed to use item: ${itemName}`);
         }
     }
 
@@ -134,11 +137,14 @@ export class GameScene extends Phaser.Scene {
             this.actionButtonContainer.add(buttonContainer);
             yOffset += 70;
         }
+        Logger.info(`Action buttons set up for ${this.player.currentEnvironment}`);
     }
 
     endDay() {
+        Logger.info(`Ending Day ${this.player.day}`);
         if (!this.player.updateDailyMetrics()) {
             this.currentMessage = "You succumbed to the wilderness...";
+            Logger.error('Player died. Game Over.');
             this.scene.start('GameOverScene', { message: this.currentMessage });
         } else {
             this.currentMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
@@ -147,16 +153,21 @@ export class GameScene extends Phaser.Scene {
     }
 
     performAction(actionName: string, actionProps: ActionProps) {
+        Logger.info(`Player attempts to perform action: ${actionName}`);
         if (this.player.energy < actionProps.energy_cost) {
             this.currentMessage = "Not enough energy to perform this action!";
+            Logger.warn('Action failed: Not enough energy.');
             this.updateUI();
             return;
         }
+
         this.player.useEnergy(actionProps.energy_cost);
+
         if (Phaser.Math.Between(1, 100) <= actionProps.success_rate) {
             this.handleActionSuccess(actionName, actionProps);
         } else {
             this.currentMessage = `Action '${actionName}' failed.`;
+            Logger.warn(`Action '${actionName}' failed.`);
         }
         this.updateUI();
     }
