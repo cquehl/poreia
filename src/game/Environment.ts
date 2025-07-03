@@ -99,7 +99,7 @@ export function getRandomActionQuantity(actionName: string): number {
         case "Scavenge for Supplies": return Phaser.Math.Between(1, 2);
         case "Break Down for Firewood": return Phaser.Math.Between(1, 3);
         case "Gather Swamp Plants": return Phaser.Math.Between(1, 4);
-        case "Search for Water Drips": return Phaser.Math.Between(1, 2);
+        case "Search for Water Drips": return Phaser.Math.Between(1, 1);
         default: return 1;
     }
 }

@@ -44,6 +44,7 @@ export const Colors = {
     BLUE: 0x0000C8, // 0, 0, 200
     DARK_BLUE: 0x00008B,    // A nice dark blue
     DARKER_BLUE: 0x000061,  // For hover effect
+    UI_BACKGROUND: 0x2a2a2a, // Dark gray for UI panels
     YELLOW: 0xFFFF00
 };
 

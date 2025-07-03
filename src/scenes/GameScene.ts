@@ -3,6 +3,7 @@ import { Player } from '../game/Player';
 import { ENVIRONMENTS, getRandomActionQuantity, ActionProps } from '../game/Environment';
 import { Colors } from '../main';
 import { Logger } from '../game/Logger';
+import { EventManager } from '../game/EventManager'; // Import the new EventManager
 
 export class GameScene extends Phaser.Scene {
     player!: Player;
@@ -19,6 +20,8 @@ export class GameScene extends Phaser.Scene {
     actionButtonContainer!: Phaser.GameObjects.Container;
     inventoryContainer!: Phaser.GameObjects.Container;
 
+    resolutionText!: Phaser.GameObjects.Text;
+
     constructor() {
         super('GameScene');
     }
@@ -33,20 +36,25 @@ export class GameScene extends Phaser.Scene {
 
         this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, screenWidth, screenHeight - 250);
 
+        // --- UI Setup ---
         this.createStatsBox(20, 20);
         this.createInventoryBox(20, 180);
         this.createMessageBox(320, screenHeight - 200, screenWidth - 350, 150);
         this.createEndDayButton(screenWidth - 100, screenHeight - 60);
 
         this.environmentText = this.add.text(screenWidth - 20, 20, '', { fontSize: '24px', color: '#FFFF00' }).setOrigin(1, 0);
-        
+        this.createActionBox();
         this.actionButtonContainer = this.add.container(0, 0);
+        
         this.setupActionButtons();
+
+        this.createDebugInfo(20, screenHeight - 20);
+        this.scale.on('resize', this.updateDebugInfo, this);
 
         this.input.keyboard!.on('keydown-E', () => this.endDay());
         this.updateUI();
     }
-
+        
     createStatsBox(x: number, y: number) {
         this.add.graphics().fillStyle(Colors.GRAY, 1).fillRoundedRect(x, y, 250, 150, 5);
         this.healthText = this.add.text(x + 10, y + 10, '', { fontSize: '20px' });
@@ -54,6 +62,7 @@ export class GameScene extends Phaser.Scene {
         this.thirstText = this.add.text(x + 10, y + 60, '', { fontSize: '20px' });
         this.energyText = this.add.text(x + 10, y + 85, '', { fontSize: '20px' });
         this.moraleText = this.add.text(x + 10, y + 110, '', { fontSize: '20px' });
+
     }
 
     createInventoryBox(x: number, y: number) {
@@ -64,7 +73,7 @@ export class GameScene extends Phaser.Scene {
 
     createMessageBox(x: number, y: number, width: number, height: number) {
         this.add.graphics().fillStyle(Colors.LIGHT_GRAY, 1).fillRoundedRect(x, y, width, height, 5);
-        this.messageBoxText = this.add.text(x + 10, y + 10, '', { fontSize: '24px', wordWrap: { width: width - 20 } });
+        this.messageBoxText = this.add.text(x + 10, y + 10, '', { fontSize: '24px', color: '#000000', wordWrap: { width: width - 20 } });
     }
 
     createEndDayButton(x: number, y: number) {
@@ -76,6 +85,43 @@ export class GameScene extends Phaser.Scene {
             .on('pointerout', () => endDayRect.fillColor = Colors.GRAY)
             .on('pointerdown', () => this.endDay());
     }
+
+    createActionBox() {
+        const currentEnv = ENVIRONMENTS[this.player.currentEnvironment];
+        const numActions = Object.keys(currentEnv.availableActions).length;
+        const panelHeight = (numActions * 70) + 20; // 70px per button + 10px padding top/bottom
+        const panelWidth = 300;
+        const panelX = 450;
+        const panelY = 50 + (panelHeight / 2) - 35;
+
+        this.add.graphics().fillStyle(Colors.UI_BACKGROUND, 0.8).fillRoundedRect(panelX - (panelWidth / 2), 20, panelWidth, panelHeight, 10);
+    }
+
+    createDebugInfo(x: number, y: number) {
+        this.resolutionText = this.add.text(x, y, '', {
+            fontSize: '16px',
+            color: '#ffffff',
+            backgroundColor: 'rgba(0,0,0,0.5)'
+        }).setOrigin(0, 1); // Pin to the bottom-left
+
+        this.updateDebugInfo(); // Initial call to set the text
+    }
+
+    updateDebugInfo() {
+        const gameWidth = this.sys.game.config.width as number;
+        const gameHeight = this.sys.game.config.height as number;
+        const displayWidth = this.scale.displaySize.width;
+        const displayHeight = this.scale.displaySize.height;
+        const zoom = this.scale.zoom;
+
+        this.resolutionText.setText([
+            `Game: ${gameWidth}x${gameHeight}`,
+            `Display: ${Math.round(displayWidth)}x${Math.round(displayHeight)}`,
+            `Zoom: ${zoom.toFixed(2)}`
+        ]);
+        Logger.debug('Resolution debug info updated.');
+    }
+
 
     updateUI() {
         this.healthText.setText(`Health: ${this.player.health}%`);
@@ -118,23 +164,35 @@ export class GameScene extends Phaser.Scene {
 
     setupActionButtons() {
         this.actionButtonContainer.removeAll(true);
+        const screenHeight = this.sys.game.config.height as number;
         const currentEnv = ENVIRONMENTS[this.player.currentEnvironment];
         let yOffset = 50;
 
         for (const actionName in currentEnv.availableActions) {
             const actionProps = currentEnv.availableActions[actionName];
-            const buttonText = this.add.text(0, 0, actionName, { fontSize: '24px'}).setOrigin(0.5);
-            const buttonWidth = buttonText.width + 40;
-            const buttonHeigth = 60;
 
-            const buttonRect = this.add.rectangle(0, 0, buttonWidth, buttonHeigth, Colors.BLUE);
-            
+            // Conditionally show actions based on required items
+            if (actionProps.required_item && !this.player.inventory[actionProps.required_item]) {
+                continue; // Skip this action if the required item is not in the inventory
+            }
+
+            // Create the text first to get its dimensions
+            const buttonText = this.add.text(0, 0, actionName, { fontSize: '24px' }).setOrigin(0.5);
+
+            // Determine button size based on text size plus padding
+            const buttonWidth = buttonText.width + 40; // 20px padding on each side
+            const buttonHeight = 60;
+
+            // Create the rectangle with the new dynamic width and dark blue color
+            const buttonRect = this.add.rectangle(0, 0, buttonWidth, buttonHeight, Colors.DARK_BLUE);
+
             const buttonContainer = this.add.container(450, yOffset, [buttonRect, buttonText]);
             
-            buttonContainer.setSize(buttonWidth, buttonHeigth)
+            // Set the size of the interactive area to match the new button size
+            buttonContainer.setSize(buttonWidth, buttonHeight)
                 .setInteractive({ useHandCursor: true })
-                .on('pointerover', () => buttonRect.fillColor = 0x000096)
-                .on('pointerout', () => buttonRect.fillColor = Colors.BLUE)
+                .on('pointerover', () => buttonRect.fillColor = Colors.DARKER_BLUE) // Use even darker blue for hover
+                .on('pointerout', () => buttonRect.fillColor = Colors.DARK_BLUE) // Revert to dark blue
                 .on('pointerdown', () => this.performAction(actionName, actionProps));
             
             this.actionButtonContainer.add(buttonContainer);
@@ -150,7 +208,14 @@ export class GameScene extends Phaser.Scene {
             Logger.error('Player died. Game Over.');
             this.scene.start('GameOverScene', { message: this.currentMessage });
         } else {
-            this.currentMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
+            const dailyEventMessage = EventManager.checkForDailyEvent(this.player.day, this.player);
+
+            let newDayMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
+            if (dailyEventMessage) {
+                newDayMessage += `\n${dailyEventMessage}`;
+            }
+            this.currentMessage = newDayMessage;
+
             this.updateUI();
         }
     }
@@ -196,6 +261,7 @@ export class GameScene extends Phaser.Scene {
             if (availableEnvs.length > 0) {
                 const newEnv = Phaser.Math.RND.pick(availableEnvs);
                 this.player.currentEnvironment = newEnv;
+                this.createActionBox();
                 this.setupActionButtons();
                 this.currentMessage = `You discovered a new area: the ${newEnv}!`;
             } else {
