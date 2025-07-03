@@ -118,7 +118,6 @@ export class GameScene extends Phaser.Scene {
 
     setupActionButtons() {
         this.actionButtonContainer.removeAll(true);
-        const screenHeight = this.sys.game.config.height as number;
         const currentEnv = ENVIRONMENTS[this.player.currentEnvironment];
         let yOffset = 50;
 
