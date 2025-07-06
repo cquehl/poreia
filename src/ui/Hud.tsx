@@ -8,14 +8,10 @@ import './ui.css';
 export const Hud: React.FC = () => {
     return (
         <div className="hud-container">
-            <div className="top-section">
-                <StatsPanel />
-                <ActionsPanel />
-            </div>
-            <div className="bottom-section">
-                <InventoryPanel />
-                <MessageBox />
-            </div>
+            <StatsPanel />
+            <ActionsPanel />
+            <InventoryPanel />
+            <MessageBox />
         </div>
     );
 };

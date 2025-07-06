@@ -113,7 +113,7 @@ export class GameScene extends Phaser.Scene {
                 eventBus.emit('messageChanged', "You went in a circle, and found nowhere new to go.");
             }
         } else {
-            eventBus.emit('messageChanged', `Success! Event triggered: ${event}.`);
+            eventBus.emit('messageChanged', `Success! ${event}.`);
         }
     }
 }

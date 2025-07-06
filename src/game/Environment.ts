@@ -8,6 +8,9 @@ export interface ActionProps {
     result_event?: string;
     required_item?: string;
     destination_env?: string; 
+    hunger_cost?: number;
+    thirst_cost?: number;
+    moral_cost?: number;
 }
 
 const BASE_ACTIONS: { [key: string]: ActionProps } = {
@@ -40,10 +43,10 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
         "Forest",
         "A dense forest. You can hear a stream nearby.",
         {
-            "Forage for Food": { energy_cost: 20, success_rate: 70, result_item: 'Berries' },
-            "Gather Water": { energy_cost: 20, success_rate: 95, result_item: 'Water' },
-            "Scout Ahead": { energy_cost: 20, success_rate: 60, result_event: 'Discover New Area' },
-            "Gather Wood": { energy_cost: 35, success_rate: 90, result_item: 'Wood' },
+            "Forage for Food": { energy_cost: 20, success_rate: 70, result_item: 'Berries', hunger_cost: 5, thirst_cost: 5 },
+            "Gather Water": { energy_cost: 20, success_rate: 95, result_item: 'Water', hunger_cost: 5, thirst_cost: 5 },
+            "Scout Ahead": { energy_cost: 20, success_rate: 60, result_event: 'Discover New Area' , hunger_cost: 25, thirst_cost: 15},
+            // "Gather Wood": { energy_cost: 35, success_rate: 90, result_item: 'Wood', hunger_cost: 15, thirst_cost: 10 },
             "Follow Sound to Creek": { energy_cost: 20, success_rate: 60, result_event: 'You follow the sound until you reach the river', destination_env : 'Riverbank' }
         }
     ),
@@ -87,9 +90,9 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
         "Swamp",
         "A murky, humid swamp. The ground is unstable.",
         {
-            "Gather Swamp Plants": { energy_cost: 15, success_rate: 50, result_item: 'Swamp Plants' },
-            "Set a Trap": { energy_cost: 20, success_rate: 70, result_event: 'Trap Set' },
-            "Filter Swamp Water": { energy_cost: 10, success_rate: 40, result_item: 'Water' }
+            "Gather Swamp Plants": { energy_cost: 15, success_rate: 50, result_item: 'Swamp Plants', hunger_cost: 5, thirst_cost: 10 },
+            // "Set a Trap": { energy_cost: 20, success_rate: 70, result_event: 'Trap Set' },
+            "Filter Swamp Water": { energy_cost: 10, success_rate: 40, result_item: 'Water', hunger_cost: 5, thirst_cost: 5 }
         }
     )
 };

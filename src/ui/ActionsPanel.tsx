@@ -43,7 +43,7 @@ export const ActionsPanel: React.FC = () => {
                 })}
             </div>
             <button className="clickable end-day-button" onClick={handleEndDayClick}>
-                End Day (E)
+                Rest Untill Tomorrow
             </button>
         </div>
     );

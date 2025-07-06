@@ -1,7 +1,7 @@
 import mitt from 'mitt';
 
 // Define the types for the events you want to emit
-type Events = {
+export type Events = {
   // Phaser to React: Game state events
   viewChanged: 'menu' | 'hud' | 'gameover';
   playerStatsChanged: { health: number, hunger: number, thirst: number, energy: number, morale: number };

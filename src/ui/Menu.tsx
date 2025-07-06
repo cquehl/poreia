@@ -9,7 +9,7 @@ export const Menu: React.FC = () => {
 
     return (
         <div className="menu-container">
-            <h1>Wilderness Survival</h1>
+            <h1 className="title-green">Wilderness Survival</h1>
             <button className="clickable" onClick={handleStart}>Start Game</button>
             <button className="clickable" disabled>Quit</button>
         </div>
