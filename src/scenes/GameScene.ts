@@ -66,8 +66,6 @@ export class GameScene extends Phaser.Scene {
             let newDayMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
             if (dailyEventMessage) {
                 newDayMessage += `\n${dailyEventMessage}`;
-                newDayMessage += `\n${dailyEventMessage}`;
-                newDayMessage += `\n cOn0 cOn0 cOn0 cOn0 cOn0 cOn0 `;
             }
             eventBus.emit('messageChanged', newDayMessage);
         }
@@ -93,7 +91,7 @@ export class GameScene extends Phaser.Scene {
         if (Phaser.Math.Between(1, 100) <= actionProps.success_rate) {
             this.handleActionSuccess(actionName, actionProps);
         } else {
-            eventBus.emit('messageChanged', `'${actionName}' failed.`);
+            eventBus.emit('messageChanged', `${actionName} failed.`);
         }
 
         this.player.initialize();
