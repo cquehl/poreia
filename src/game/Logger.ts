@@ -12,8 +12,13 @@ export class Logger {
         if (level >= CURRENT_LOG_LEVEL) {
             const timestamp = new Date().toISOString();
             const levelName = Object.keys(LOG_LEVELS).find(key => LOG_LEVELS[key as keyof typeof LOG_LEVELS] === level);
+            
+            // If there are optional parameters, stringify them to keep the log on one line
+            const paramsString = optionalParams.length > 0
+                ? ' ' + optionalParams.map(p => JSON.stringify(p)).join(' ')
+                : '';
 
-            console.log(`[${timestamp}] [${levelName}] ${message}`, ...optionalParams);
+            console.log(`[${timestamp}] [${levelName}] ${message} - ${paramsString}`);
         }
     }
 

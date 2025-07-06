@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
 import { GameOverScene } from './scenes/GameOverScene';
-import { Hud } from './ui/Hud';
+import { App } from './ui/App'; // Import the new App component
 
 // Phaser game configuration
 const config: Phaser.Types.Core.GameConfig = {
@@ -20,14 +20,13 @@ const config: Phaser.Types.Core.GameConfig = {
     }
 };
 
-// Start the Phaser game and assign to a constant to satisfy the linter
 const game = new Phaser.Game(config);
 
 // Render the React UI
 const uiRoot = ReactDOM.createRoot(document.getElementById('ui-root')!);
 uiRoot.render(
   <React.StrictMode>
-    <Hud />
+    <App /> {/* Render the App component */}
   </React.StrictMode>
 );
 

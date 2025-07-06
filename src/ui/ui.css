@@ -1,61 +1,66 @@
+/* Base styles for the main container */
 .hud-container {
     display: flex;
     flex-direction: column;
+    justify-content: space-between; /* Pushes top and bottom sections apart */
     height: 100%;
     color: white;
     font-family: Arial, sans-serif;
+    padding: 10px;
+    box-sizing: border-box; /* Ensures padding is included in height/width */
 }
 
+/* Base styles for all panels */
 .panel {
-    background-color: rgba(42, 42, 42, 0.8);
+    background-color: rgba(42, 42, 42, 0.85);
     border: 1px solid #969696;
     border-radius: 5px;
     padding: 10px;
-    margin: 10px;
+    box-sizing: border-box;
 }
 
-.top-section {
+/* Top and bottom layout sections */
+.top-section, .bottom-section {
     display: flex;
-    justify-content: space-between;
+    gap: 10px; /* Adds space between panels */
 }
+
+/* --- Panel Specific Styles --- */
 
 .stats-panel {
     width: 250px;
+    flex-shrink: 0; /* Prevents this panel from shrinking */
 }
 
 .actions-panel {
-    flex-grow: 1;
+    flex-grow: 1; /* Allows this panel to take up remaining space */
 }
 
 .actions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 10px;
-}
-
-.bottom-section {
-    display: flex;
-    justify-content: space-between;
-    position: absolute;
-    bottom: 0;
-    width: calc(100% - 20px); /* Account for margin */
+    margin-bottom: 10px;
 }
 
 .inventory-panel {
     width: 250px;
+    flex-shrink: 0;
     height: 250px;
+    overflow-y: auto; /* Add a scrollbar if inventory is long */
 }
 
 .inventory-panel ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .inventory-panel li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .message-box {
@@ -63,13 +68,17 @@
     height: 250px;
 }
 
+/* --- Button Styles --- */
+
 button.clickable {
     background-color: #00008B;
     color: white;
     border: 1px solid #969696;
-    padding: 10px;
+    padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
 }
 
 button.clickable:hover {
@@ -77,11 +86,61 @@ button.clickable:hover {
 }
 
 .end-day-button {
-    margin-top: 20px;
     width: 100%;
     background-color: #323232;
+    margin-top: auto; /* Pushes it to the bottom of the actions panel */
 }
 
 .end-day-button:hover {
     background-color: #969696;
+}
+
+/* --- Responsive Design for Smaller Screens --- */
+@media (max-width: 800px) {
+    .hud-container {
+        justify-content: flex-start; /* Stack from the top */
+        overflow-y: auto; /* Allow scrolling on small screens */
+    }
+
+    .top-section, .bottom-section {
+        flex-direction: column; /* Stack panels vertically */
+    }
+
+    .stats-panel, .inventory-panel {
+        width: 100%; /* Make side panels full-width */
+        height: auto; /* Auto-adjust height */
+    }
+
+    .message-box {
+        height: 150px; /* Reduce height on mobile */
+    }
+
+        .app-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    .menu-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 100%;
+        gap: 20px;
+    }
+
+    .menu-container h1 {
+        font-size: 72px;
+        color: white;
+    }
+
+    .menu-container p {
+        font-size: 48px;
+        color: white;
+    }
+
+    .menu-container.game-over h1 {
+        color: #FF0000;
+    }
 }

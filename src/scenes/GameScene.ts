@@ -14,47 +14,50 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         Logger.info('GameScene creating...');
-        const screenWidth = this.sys.game.config.width as number;
-        const screenHeight = this.sys.game.config.height as number;
+        eventBus.emit('viewChanged', 'hud');
 
-        // --- Game World Setup ---
-        this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, screenWidth, screenHeight);
+        this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, this.scale.width, this.scale.height);
 
-        // --- Game State Setup ---
         this.player = new Player();
-        this.player.initialize(); // Emit initial state to the UI
+        this.player.initialize();
         eventBus.emit('messageChanged', `Welcome to the ${this.player.currentEnvironment}!`);
 
-        // --- Listen for UI events ---
         this.registerUIListeners();
-
-        // --- Keyboard Input ---
-        this.input.keyboard!.on('keydown-E', () => this.endDay());
+        this.events.on('shutdown', this.shutdown, this);
     }
     
-    registerUIListeners() {
-        eventBus.on('performAction', ({ actionName, actionProps }) => {
-            this.performAction(actionName, actionProps);
-        });
-        eventBus.on('useItem', (itemName) => this.onUseItem(itemName));
-        eventBus.on('endDay', () => this.endDay());
+    shutdown() {
+        Logger.info('GameScene shutting down...');
+        this.events.off('shutdown', this.shutdown, this);
+        this.unregisterUIListeners();
     }
 
-    onUseItem(itemName: string) {
+    registerUIListeners() {
+        // Use the arrow function handlers defined below
+        eventBus.on('performAction', this.performAction);
+        eventBus.on('useItem', this.onUseItem);
+        eventBus.on('endDay', this.endDay);
+        this.input.keyboard!.on('keydown-E', this.endDay);
+    }
+
+    unregisterUIListeners() {
+        // Use the same handler references to unregister
+        eventBus.off('performAction', this.performAction);
+        eventBus.off('useItem', this.onUseItem);
+        eventBus.off('endDay', this.endDay);
+        this.input.keyboard!.off('keydown-E', this.endDay);
+    }
+
+    private readonly onUseItem = (itemName: string) => {
         if (this.player.useItem(itemName)) {
             eventBus.emit('messageChanged', `You used 1 ${itemName}.`);
-            Logger.info(`Player used item: ${itemName}`);
-        } else {
-            Logger.warn(`Player failed to use item: ${itemName}`);
         }
     }
 
-    endDay() {
-        Logger.info(`Ending Day ${this.player.day}`);
+    private readonly endDay = () => {
         if (!this.player.updateDailyMetrics()) {
             const message = "You succumbed to the wilderness...";
             Logger.error('Player died. Game Over.');
-            this.cleanup();
             this.scene.start('GameOverScene', { message });
         } else {
             const dailyEventMessage = EventManager.checkForDailyEvent(this.player.day, this.player);
@@ -66,11 +69,10 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    performAction(actionName: string, actionProps: ActionProps) {
-        Logger.info(`Player attempts to perform action: ${actionName}`);
+    private readonly performAction = (data: { actionName: string, actionProps: ActionProps }) => {
+        const { actionName, actionProps } = data;
         if (this.player.energy < actionProps.energy_cost) {
             eventBus.emit('messageChanged', "Not enough energy to perform this action!");
-            Logger.warn('Action failed: Not enough energy.');
             return;
         }
 
@@ -80,7 +82,6 @@ export class GameScene extends Phaser.Scene {
             this.handleActionSuccess(actionName, actionProps);
         } else {
             eventBus.emit('messageChanged', `Action '${actionName}' failed.`);
-            Logger.warn(`Action '${actionName}' failed.`);
         }
     }
 
@@ -112,10 +113,5 @@ export class GameScene extends Phaser.Scene {
         } else {
             eventBus.emit('messageChanged', `Success! Event triggered: ${event}.`);
         }
-    }
-
-    private cleanup() {
-        // Remove all listeners from the event bus to prevent memory leaks
-        eventBus.all.clear();
     }
 }
