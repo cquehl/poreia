@@ -1,5 +1,5 @@
-import Phaser from 'phaser';
 
+import Phaser from 'phaser';
 export interface ActionProps {
     energy_cost: number;
     success_rate: number;
@@ -45,9 +45,9 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
         {
             "Forage for Food": { energy_cost: 20, success_rate: 70, result_item: 'Berries', hunger_cost: 5, thirst_cost: 5 },
             "Gather Water": { energy_cost: 20, success_rate: 95, result_item: 'Water', hunger_cost: 5, thirst_cost: 5 },
-            "Scout Ahead": { energy_cost: 20, success_rate: 60, result_event: 'Discover New Area' , hunger_cost: 25, thirst_cost: 15},
+            // "Scout Ahead": { energy_cost: 20, success_rate: 60, result_event: 'Discover New Area' , hunger_cost: 25, thirst_cost: 15},
             // "Gather Wood": { energy_cost: 35, success_rate: 90, result_item: 'Wood', hunger_cost: 15, thirst_cost: 10 },
-            "Follow Sound to Creek": { energy_cost: 20, success_rate: 60, result_event: 'You follow the sound until you reach the river', destination_env : 'Riverbank' }
+            "Follow Sound to Creek": { energy_cost: 20, success_rate: 60, result_event: 'Go To Specific Area', destination_env : 'Riverbank' }
         }
     ),
     "Riverbank": new Environment(
@@ -59,33 +59,33 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
             "Search for Rare Herbs": { energy_cost: 25, success_rate: 30, result_item: 'Herbs' }
         }
     ),
-    // "Cave": new Environment(
-    //     "Cave",
-    //     "A dark, damp cave. Strange noises echo from the depths.",
-    //     {
-    //         "Explore Deeper": { energy_cost: 30, success_rate: 40, result_event: 'Find Rare Minerals' },
-    //         "Rest in Shelter": { energy_cost: -20, success_rate: 100, result_event: 'Restore Morale' },
-    //         "Search for Water Drips": { energy_cost: 10, success_rate: 50, result_item: 'Water' }
-    //     }
-    // ),
-    // "Mountain Pass": new Environment(
-    //     "Mountain Pass",
-    //     "A treacherous and windy mountain pass. The air is thin.",
-    //     {
-    //         "Hunt for Goats": { energy_cost: 35, success_rate: 40, result_item: 'Meat' },
-    //         "Find Shelter from Wind": { energy_cost: 15, success_rate: 80, result_event: 'Reduce Morale Loss' },
-    //         "Look for Rare Minerals": { energy_cost: 25, success_rate: 20, result_item: 'Minerals' }
-    //     }
-    // ),
-    // "Deserted Shack": new Environment(
-    //     "Deserted Shack",
-    //     "An old, abandoned shack. It might contain useful supplies.",
-    //     {
-    //         "Scavenge for Supplies": { energy_cost: 15, success_rate: 60, result_item: 'Canned Food' },
-    //         "Reinforce Shelter": { energy_cost: 20, success_rate: 90, result_event: 'Improved Shelter' },
-    //         "Break Down for Firewood": { energy_cost: 25, success_rate: 70, result_item: 'Wood' }
-    //     }
-    // ),
+    "Cave": new Environment(
+        "Cave",
+        "A dark, damp cave. Strange noises echo from the depths.",
+        {
+            "Explore Deeper": { energy_cost: 30, success_rate: 40, result_event: 'Find Rare Minerals' },
+            "Rest in Shelter": { energy_cost: -20, success_rate: 100, result_event: 'Restore Morale' },
+            "Search for Water Drips": { energy_cost: 10, success_rate: 50, result_item: 'Water' }
+        }
+    ),
+    "Mountain Pass": new Environment(
+        "Mountain Pass",
+        "A treacherous and windy mountain pass. The air is thin.",
+        {
+            "Hunt for Goats": { energy_cost: 35, success_rate: 40, result_item: 'Meat' },
+            // "Find Shelter from Wind": { energy_cost: 15, success_rate: 80, result_event: 'Reduce Morale Loss' },
+            "Look for Rare Minerals": { energy_cost: 25, success_rate: 20, result_item: 'Minerals' }
+        }
+    ),
+    "Deserted Shack": new Environment(
+        "Deserted Shack",
+        "An old, abandoned shack. It might contain useful supplies.",
+        {
+            "Scavenge for Supplies": { energy_cost: 15, success_rate: 60, result_item: 'Canned Food' },
+            "Reinforce Shelter": { energy_cost: 20, success_rate: 90, result_event: 'Improved Shelter' },
+            "Break Down for Firewood": { energy_cost: 25, success_rate: 70, result_item: 'Wood' }
+        }
+    ),
     "Swamp": new Environment(
         "Swamp",
         "A murky, humid swamp. The ground is unstable.",

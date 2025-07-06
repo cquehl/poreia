@@ -19,16 +19,20 @@ const SCRIPTED_EVENTS: DailyEvent[] = [
         message: "The first night is always the hardest."
     },
     {
+        day: 3,
+        message: "A storm is brewing on the horizon."
+    },
+    {
         day: 5,
         message: "You start to feel a deep sense of loneliness.",
-        action: (player) => player.updateMorale(-10)
+        action: (player) => player.updateMorale(-33)
     },
     {
         day: 7,
         message: "A storm is brewing on the horizon."
     },
     {
-        day: 20,
+        day: 10,
         message: "You've survived for so long. A flicker of hope returns.",
         action: (player) => player.updateMorale(20)
     }

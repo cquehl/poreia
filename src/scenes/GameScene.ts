@@ -5,6 +5,8 @@ import { Logger } from '../game/Logger';
 import { EventManager } from '../game/EventManager';
 import { eventBus } from '../ui/EventBus';
 
+const RESTRICTED_FROM_SCOUTING = ['Cave', 'Deserted Shack', 'Start'];
+
 export class GameScene extends Phaser.Scene {
     player!: Player;
 
@@ -74,7 +76,15 @@ export class GameScene extends Phaser.Scene {
     private readonly performAction = (data: { actionName: string, actionProps: ActionProps }) => {
         const { actionName, actionProps } = data;
         if (this.player.energy < actionProps.energy_cost) {
-            eventBus.emit('messageChanged', "Not enough energy to perform this action!");
+            eventBus.emit('messageChanged', "You are too tired to do that.");
+            return;
+        }
+        if (actionProps.hunger_cost && this.player.hunger < actionProps.hunger_cost) {
+            eventBus.emit('messageChanged', "You are too hungry to do that.");
+            return;
+        }
+        if (actionProps.thirst_cost && this.player.thirst < actionProps.thirst_cost) {
+            eventBus.emit('messageChanged', "You are too thirsty to do that.");
             return;
         }
 
@@ -83,8 +93,10 @@ export class GameScene extends Phaser.Scene {
         if (Phaser.Math.Between(1, 100) <= actionProps.success_rate) {
             this.handleActionSuccess(actionName, actionProps);
         } else {
-            eventBus.emit('messageChanged', `Action '${actionName}' failed.`);
+            eventBus.emit('messageChanged', `'${actionName}' failed.`);
         }
+
+        this.player.initialize();
     }
 
     private handleActionSuccess(actionName: string, actionProps: ActionProps) {
@@ -93,27 +105,56 @@ export class GameScene extends Phaser.Scene {
             const quantity = getRandomActionQuantity(actionName);
             this.player.addItem(item, quantity);
             eventBus.emit('messageChanged', `Success! You found ${quantity} ${item}(s).`);
-            if (actionName === 'Forage for Food') this.player.updateMorale(10);
-        } else if (actionProps.result_event) {
+
+            const moraleBoostItems = ['Berries', 'Fish', 'Water', 'Wood'];
+            if (moraleBoostItems.includes(item)) {
+                this.player.updateMorale(7);
+                eventBus.emit('messageChanged', 'You feel a sense of accomplishment.');
+            }
+        } 
+        else if (actionProps.result_event) {
             this.handleEventResult(actionProps);
-        } else {
-            eventBus.emit('messageChanged', `Action '${actionName}' successful!`);
+        } 
+        else {
+            eventBus.emit('messageChanged', `'${actionName}' successful!`);
         }
     }
 
     private handleEventResult(actionProps: ActionProps) {
         const event = actionProps.result_event!;
-        if (event === 'Discover New Area') {
-            const availableEnvs = Object.keys(ENVIRONMENTS).filter(e => e !== this.player.currentEnvironment);
-            if (availableEnvs.length > 0) {
-                const newEnv = Phaser.Math.RND.pick(availableEnvs);
-                this.player.changeEnvironment(newEnv);
-                eventBus.emit('messageChanged', `You discovered a new area: the ${newEnv}!`);
-            } else {
-                eventBus.emit('messageChanged', "You went in a circle, and found nowhere new to go.");
+
+        switch (event) {
+            case 'Discover New Area': {
+                const availableEnvs = Object.keys(ENVIRONMENTS).filter(envName =>
+                    // !this.player.visitedEnvironments.has(envName) &&
+                    !RESTRICTED_FROM_SCOUTING.includes(envName)
+                );
+
+                if (availableEnvs.length > 0) {
+                    const newEnv = Phaser.Math.RND.pick(availableEnvs);
+                    this.player.changeEnvironment(newEnv);
+                    eventBus.emit('messageChanged', `You discovered a new area: the ${newEnv}!`);
+                } else {
+                    eventBus.emit('messageChanged', "You've must have gone in a circle, that rock looks familiar.");
+                }
+                break;
             }
-        } else {
-            eventBus.emit('messageChanged', `Success! ${event}.`);
+
+            case 'Go To Specific Area': {
+                if (actionProps.destination_env) {
+                    const newEnv = actionProps.destination_env;
+                    this.player.changeEnvironment(newEnv);
+                    eventBus.emit('messageChanged', `You moved to the ${newEnv}.`);
+                }
+                break;
+            }
+
+            default: {
+                if (event) {
+                    eventBus.emit('messageChanged', `Success! Event triggered: ${event}.`);
+                }
+                break;
+            }
         }
     }
 }
