@@ -117,11 +117,23 @@ export class Player {
         this.energy = 100;
 
         this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 15));
-        this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(15, 20));
+        this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(25, 40));
         this.morale = Math.max(0, this.morale - Phaser.Math.Between(5, 10));
 
         if (this.hunger <= 0) this.takeDamage(5);
         if (this.thirst <= 0) this.takeDamage(10);
+        if (this.morale <= 0) this.takeDamage(3) 
+            
+        // Log a warning if any stat is getting low.
+        if (this.hunger <= 40) {
+            Logger.info(`Getting hungry?: ${this.hunger}%`);
+        }
+        if (this.thirst <= 40) {
+            Logger.info(`You are thirsty: ${this.thirst}%`);
+        }
+        if (this.morale <= 50) {
+            Logger.info(`Morale is getting low: ${this.morale}%`);
+        }
 
         Logger.info(`--- Day ${this.day} Update ---`);
         Logger.info(`Health: ${this.health}, Hunger: ${this.hunger}, Energy: ${this.energy}, Morale: ${this.morale}`);

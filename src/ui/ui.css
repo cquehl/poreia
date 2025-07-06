@@ -6,7 +6,7 @@
     height: 100%;
     color: white;
     font-family: Arial, sans-serif;
-    padding: 10px;
+    padding: 10%; /*10px;*/
     box-sizing: border-box; /* Ensures padding is included in height/width */
 }
 
@@ -64,8 +64,12 @@
 }
 
 .message-box {
+    margin: 0 0 5px 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
     flex-grow: 1;
     height: 250px;
+    overflow-y: auto;
 }
 
 /* --- Button Styles --- */

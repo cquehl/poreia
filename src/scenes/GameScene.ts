@@ -64,6 +64,8 @@ export class GameScene extends Phaser.Scene {
             let newDayMessage = `Day ${this.player.day} begins in the ${this.player.currentEnvironment}.`;
             if (dailyEventMessage) {
                 newDayMessage += `\n${dailyEventMessage}`;
+                newDayMessage += `\n${dailyEventMessage}`;
+                newDayMessage += `\n cOn0 cOn0 cOn0 cOn0 cOn0 cOn0 `;
             }
             eventBus.emit('messageChanged', newDayMessage);
         }
@@ -108,7 +110,7 @@ export class GameScene extends Phaser.Scene {
                 this.player.changeEnvironment(newEnv);
                 eventBus.emit('messageChanged', `You discovered a new area: the ${newEnv}!`);
             } else {
-                eventBus.emit('messageChanged', "You found nowhere new to go.");
+                eventBus.emit('messageChanged', "You went in a circle, and found nowhere new to go.");
             }
         } else {
             eventBus.emit('messageChanged', `Success! Event triggered: ${event}.`);
