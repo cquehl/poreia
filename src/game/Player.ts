@@ -20,7 +20,7 @@ export class Player {
         this.energy = 100;
         this.morale = 100;
         this.inventory = {};
-        this.currentEnvironment = "Forest";
+        this.currentEnvironment = "Start";
         this.day = 1;
         this.distance = 0;
         Logger.info('Player created');
@@ -102,13 +102,13 @@ export class Player {
             Logger.info(`Used ${itemName}.`);
             switch (itemName) {
                 case 'Berries':
-                    this.consumeFood(20);
+                    this.consumeFood(5);
                     return true;
                 case 'Fish':
-                    this.consumeFood(40);
+                    this.consumeFood(20);
                     return true;
                 case 'Water':
-                    this.drinkWater(30);
+                    this.drinkWater(10);
                     return true;
             }
         }
@@ -119,8 +119,8 @@ export class Player {
         this.day += 1;
         this.energy = 100;
 
-        this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 15));
-        this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(25, 40));
+        this.hunger = Math.max(0, this.hunger - Phaser.Math.Between(10, 25));
+        this.thirst = Math.max(0, this.thirst - Phaser.Math.Between(25, 34));
         this.morale = Math.max(0, this.morale - Phaser.Math.Between(5, 10));
 
         if (this.hunger <= 0) this.takeDamage(5);

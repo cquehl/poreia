@@ -151,6 +151,16 @@ export class GameScene extends Phaser.Scene {
                 break;
             }
 
+            case 'BarginWithFate': {
+                eventBus.emit('messageChanged', 'You tell yourself if you get out of here, you\'ll change, and be more careful.');
+                break;
+            }
+            
+            case 'PleadWithFate': {
+                eventBus.emit('messageChanged', 'You cry out, "Why me!?" The sky does not answer.');
+                break;
+            }
+
             default: {
                 if (event) {
                     eventBus.emit('messageChanged', `Success! Event triggered: ${event}.`);

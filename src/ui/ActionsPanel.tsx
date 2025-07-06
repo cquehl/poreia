@@ -3,7 +3,7 @@ import { eventBus } from './EventBus';
 import { ENVIRONMENTS } from '../game/Environment';
 
 export const ActionsPanel: React.FC = () => {
-    const [environment, setEnvironment] = useState('Forest');
+    const [environment, setEnvironment] = useState('Start');
     const [inventory, setInventory] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
