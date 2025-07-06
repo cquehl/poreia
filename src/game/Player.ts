@@ -11,6 +11,7 @@ export class Player {
     inventory: { [key: string]: number };
     currentEnvironment: string;
     day: number;
+    distance: number;
 
     constructor() {
         this.health = 100;
@@ -21,6 +22,7 @@ export class Player {
         this.inventory = {};
         this.currentEnvironment = "Forest";
         this.day = 1;
+        this.distance = 0;
         Logger.info('Player created');
     }
 
@@ -35,7 +37,8 @@ export class Player {
         eventBus.emit('playerInventoryChanged', { ...this.inventory });
         eventBus.emit('gameInfoChanged', {
             day: this.day,
-            environment: this.currentEnvironment
+            environment: this.currentEnvironment,
+            distance: this.distance
         });
     }
 
@@ -125,13 +128,13 @@ export class Player {
         if (this.morale <= 0) this.takeDamage(3) 
             
         // Log a warning if any stat is getting low.
-        if (this.hunger <= 40) {
+        if (this.hunger <= 30) {
             Logger.info(`Getting hungry?: ${this.hunger}%`);
         }
-        if (this.thirst <= 40) {
+        if (this.thirst <= 30) {
             Logger.info(`You are thirsty: ${this.thirst}%`);
         }
-        if (this.morale <= 50) {
+        if (this.morale <= 30) {
             Logger.info(`Morale is getting low: ${this.morale}%`);
         }
 

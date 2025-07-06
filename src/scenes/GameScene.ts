@@ -131,7 +131,9 @@ export class GameScene extends Phaser.Scene {
                 if (availableEnvs.length > 0) {
                     const newEnv = Phaser.Math.RND.pick(availableEnvs);
                     this.player.changeEnvironment(newEnv);
-                    eventBus.emit('messageChanged', `You discovered a new area: the ${newEnv}!`);
+                    const journey = Phaser.Math.Between(3, 7);
+                    this.player.distance += journey;
+                    eventBus.emit('messageChanged', `You traveled for ${journey} miles and discovered the ${newEnv}!`);
                 } else {
                     eventBus.emit('messageChanged', "You've must have gone in a circle, that rock looks familiar.");
                 }
@@ -142,7 +144,9 @@ export class GameScene extends Phaser.Scene {
                 if (actionProps.destination_env) {
                     const newEnv = actionProps.destination_env;
                     this.player.changeEnvironment(newEnv);
-                    eventBus.emit('messageChanged', `You moved to the ${newEnv}.`);
+                    const journey = Phaser.Math.Between(3, 7);
+                    this.player.distance += journey;
+                    eventBus.emit('messageChanged', `You traveled for ${journey} miles and discovered the ${newEnv}!`);
                 }
                 break;
             }

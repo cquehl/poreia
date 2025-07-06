@@ -6,7 +6,7 @@ export type Events = {
   viewChanged: 'menu' | 'hud' | 'gameover';
   playerStatsChanged: { health: number, hunger: number, thirst: number, energy: number, morale: number };
   playerInventoryChanged: { [key: string]: number };
-  gameInfoChanged: { day: number, environment: string };
+  gameInfoChanged: { day: number, environment: string, distance: number};
   messageChanged: string;
   gameOver: { message: string };
 

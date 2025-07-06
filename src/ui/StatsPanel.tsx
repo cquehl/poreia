@@ -3,7 +3,7 @@ import { eventBus, Events } from './EventBus'; // Import the 'Events' type
 
 export const StatsPanel: React.FC = () => {
     const [stats, setStats] = useState({ health: 100, hunger: 100, thirst: 100, energy: 100, morale: 100 });
-    const [info, setInfo] = useState({ day: 1, environment: 'Forest' });
+    const [info, setInfo] = useState({ day: 1, environment: 'Start', distance: 0 });
 
     useEffect(() => {
         // Use the specific types from the 'Events' definition
@@ -27,6 +27,7 @@ export const StatsPanel: React.FC = () => {
             <p>Thirst: {stats.thirst}%</p>
             <p>Energy: {stats.energy}%</p>
             <p>Morale: {stats.morale}%</p>
+            <p>Traveled: {info.distance} miles</p>
         </div>
     );
 };

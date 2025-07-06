@@ -5,7 +5,7 @@ const LOG_LEVELS = {
     ERROR: 3,
 };
 
-const CURRENT_LOG_LEVEL = LOG_LEVELS.WARN;
+const CURRENT_LOG_LEVEL = LOG_LEVELS.DEBUG;
 
 export class Logger {
     private static log(level: number, message: string, ...optionalParams: any[]) {

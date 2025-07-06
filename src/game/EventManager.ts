@@ -16,7 +16,7 @@ export interface DailyEvent {
 const SCRIPTED_EVENTS: DailyEvent[] = [
     {
         day: 1,
-        message: "\n The first night is always the hardest."
+        message: "\n The first night is always the hardest.",
     },
     {
         day: 3,
@@ -25,7 +25,7 @@ const SCRIPTED_EVENTS: DailyEvent[] = [
     {
         day: 5,
         message: "\n You start to feel a deep sense of loneliness.",
-        action: (player) => player.updateMorale(-33)
+        action: (player) => player.updateMorale(-25)
     },
     {
         day: 7,
