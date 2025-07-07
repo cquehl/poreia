@@ -115,6 +115,19 @@ export class Player {
         return false;
     }
 
+    public applyActionCosts(actionProps: { energy_cost: number, hunger_cost?: number, thirst_cost?: number, moral_cost?: number }): void {
+        this.useEnergy(actionProps.energy_cost);
+        if (actionProps.hunger_cost) {
+            this.hunger = Math.max(0, this.hunger - actionProps.hunger_cost);
+        }
+        if (actionProps.thirst_cost) {
+            this.thirst = Math.max(0, this.thirst - actionProps.thirst_cost);
+        }
+        if (actionProps.moral_cost) {
+            this.updateMorale(-actionProps.moral_cost);
+        }
+    }
+
     updateDailyMetrics(): boolean {
         this.day += 1;
         this.energy = 100;

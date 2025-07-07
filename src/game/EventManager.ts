@@ -15,25 +15,25 @@ export interface DailyEvent {
  */
 const SCRIPTED_EVENTS: DailyEvent[] = [
     {
-        day: 1,
-        message: "\n The first night is always the hardest.",
+        day: 2,
+        message: "\n The first night is always the hardest.\n",
     },
     {
         day: 3,
-        message: "\n A storm is brewing on the horizon."
+        message: "\n A storm is brewing on the horizon.\n"
     },
     {
         day: 5,
-        message: "\n You start to feel a deep sense of loneliness.",
+        message: "\n You start to feel a deep sense of loneliness.\n",
         action: (player) => player.updateMorale(-25)
     },
     {
         day: 7,
-        message: "\n A storm is brewing on the horizon."
+        message: "\n A storm is brewing on the horizon.\n"
     },
     {
         day: 10,
-        message: "\n You've survived for so long. A flicker of hope returns.",
+        message: "\n You've survived for so long. A flicker of hope returns.\n",
         action: (player) => player.updateMorale(40)
     }
 ];

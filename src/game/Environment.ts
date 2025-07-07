@@ -14,7 +14,7 @@ export interface ActionProps {
 }
 
 const BASE_ACTIONS: { [key: string]: ActionProps } = {
-    "Scout Ahead": { energy_cost: 50, success_rate: 60, result_event: 'Discover New Area' },
+    "Scout Ahead": { energy_cost: 33, thirst_cost: 5, hunger_cost: 10, success_rate: 65, result_event: 'Discover New Area' },
     "Make Fire": { energy_cost: 25, success_rate: 50, result_event: 'Fire Started', required_item: 'Wood' }
 };
 
@@ -36,8 +36,8 @@ export const ENVIRONMENTS: { [key: string]: Environment } = {
         "Start",
         "You are leading a wagon train west on the Origan Trail. A storm came in out of nowhere and you've lost the wagon train.",
         {
-            "Denial": { energy_cost: 7, success_rate: 100, result_event: 'BarginWithFate' },
-            "Plead": { energy_cost: 5, success_rate: 100, result_event: 'PleadWithFate' }             
+            "Denial": { energy_cost: 2, moral_cost: 1, success_rate: 100, result_event: 'BarginWithFate' },
+            "Plead": { energy_cost: 5, moral_cost: 15, success_rate: 100, result_event: 'PleadWithFate' }             
         }
     ),
         "Forest": new Environment(

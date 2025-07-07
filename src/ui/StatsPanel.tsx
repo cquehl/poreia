@@ -22,12 +22,13 @@ export const StatsPanel: React.FC = () => {
     return (
         <div className="panel stats-panel">
             <h3>{info.environment} (Day: {info.day})</h3>
+            <h3>Traveled: {info.distance} miles</h3>
             <p>Health: {stats.health}%</p>
             <p>Hunger: {stats.hunger}%</p>
             <p>Thirst: {stats.thirst}%</p>
             <p>Energy: {stats.energy}%</p>
             <p>Morale: {stats.morale}%</p>
-            <p>Traveled: {info.distance} miles</p>
+            
         </div>
     );
 };

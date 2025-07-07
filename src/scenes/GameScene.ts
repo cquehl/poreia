@@ -85,8 +85,12 @@ export class GameScene extends Phaser.Scene {
             eventBus.emit('messageChanged', "You are too thirsty to do that.");
             return;
         }
+        if (actionProps.moral_cost && this.player.morale < actionProps.moral_cost) {
+            eventBus.emit('messageChanged', "Your spirit is too low to do that.");
+            return;
+        }
 
-        this.player.useEnergy(actionProps.energy_cost);
+        this.player.applyActionCosts(actionProps);
 
         if (Phaser.Math.Between(1, 100) <= actionProps.success_rate) {
             this.handleActionSuccess(actionName, actionProps);
@@ -124,7 +128,7 @@ export class GameScene extends Phaser.Scene {
         switch (event) {
             case 'Discover New Area': {
                 const availableEnvs = Object.keys(ENVIRONMENTS).filter(envName =>
-                    // !this.player.visitedEnvironments.has(envName) &&
+                    envName!== this.player.currentEnvironment &&
                     !RESTRICTED_FROM_SCOUTING.includes(envName)
                 );
 
@@ -133,7 +137,7 @@ export class GameScene extends Phaser.Scene {
                     this.player.changeEnvironment(newEnv);
                     const journey = Phaser.Math.Between(3, 7);
                     this.player.distance += journey;
-                    eventBus.emit('messageChanged', `You traveled for ${journey} miles and discovered the ${newEnv}!`);
+                    eventBus.emit('messageChanged', `\nYou traveled for ${journey} miles and discovered the ${newEnv}! ${ENVIRONMENTS[newEnv].description}`);
                 } else {
                     eventBus.emit('messageChanged', "You've must have gone in a circle, that rock looks familiar.");
                 }
@@ -146,7 +150,7 @@ export class GameScene extends Phaser.Scene {
                     this.player.changeEnvironment(newEnv);
                     const journey = Phaser.Math.Between(3, 7);
                     this.player.distance += journey;
-                    eventBus.emit('messageChanged', `You traveled for ${journey} miles and discovered the ${newEnv}!`);
+                    eventBus.emit('messageChanged', `\nYou traveled for ${journey} miles and discovered the ${newEnv}! ${ENVIRONMENTS[newEnv].description}`);
                 }
                 break;
             }
