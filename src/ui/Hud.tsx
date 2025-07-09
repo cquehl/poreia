@@ -2,7 +2,7 @@ import React from 'react';
 import { StatsPanel } from './StatsPanel';
 import { InventoryPanel } from './InventoryPanel';
 import { ActionsPanel } from './ActionsPanel';
-import { MessageBox } from './MessageBox';
+import { MessagePanel } from './MessagePanel';
 import './ui.css';
 
 export const Hud: React.FC = () => {
@@ -11,7 +11,7 @@ export const Hud: React.FC = () => {
             <StatsPanel />
             <ActionsPanel />
             <InventoryPanel />
-            <MessageBox />
+            <MessagePanel />
         </div>
     );
 };

@@ -38,10 +38,17 @@
     padding: 10px;
     display: grid;
     gap: 10px;
-    grid-template-columns: 250px 1fr;
-    grid-template-rows: 1fr 250px;
+    grid-template-columns: minmax(250px, 3fr) 7fr;
+    grid-template-rows: 1fr auto auto;
+
+     /*   This map defines the layout visually.
+     * -  'stats' spans two rows in the first column.
+     * -  'inventory' is at the bottom of the first column.
+     * -   The right column is stacked as requested.
+    */
     grid-template-areas:
-        "stats actions"
+        "stats  visuals"
+        "stats  actions"
         "inventory message";
 }
 
@@ -61,7 +68,8 @@
 .stats-panel { grid-area: stats; }
 .actions-panel { grid-area: actions; }
 .inventory-panel { grid-area: inventory; }
-.message-box { grid-area: message; }
+.message-panel { grid-area: message; }
+.visual-panel { grid-area: visuals; }
 
 /* Specific panel styling */
 .actions-grid {
@@ -77,6 +85,13 @@
     overflow-y: auto;
 }
 
+.visual-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
 .inventory-panel li {
     display: flex;
     justify-content: space-between;
@@ -84,11 +99,11 @@
     margin-bottom: 8px;
 }
 
-.message-box {
+.message-pannel {
     overflow-y: auto; /* This enables scrolling for the message list */
 }
 
-.message-box p {
+.message-pannel p {
   margin: 0 0 5px 0;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -121,15 +136,15 @@ button.clickable:hover {
     background-color: #969696;
 }
 
-/* --- Responsive Design for Smaller Screens --- */
 @media (max-width: 800px) {
     .hud-container {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
+        grid-template-rows: auto;
         grid-template-areas:
             "stats"
-            "actions"
             "inventory"
+            "visuals"
+            "actions"
             "message";
         overflow-y: auto;
     }
