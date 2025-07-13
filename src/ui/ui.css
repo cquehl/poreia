@@ -34,21 +34,16 @@
 /* --- In-Game HUD --- */
 .hud-container {
     height: 100%;
+    min-height: 0;
     box-sizing: border-box;
     padding: 10px;
     display: grid;
     gap: 10px;
     grid-template-columns: minmax(250px, 3fr) 7fr;
-    grid-template-rows: 1fr auto auto;
-
-     /*   This map defines the layout visually.
-     * -  'stats' spans two rows in the first column.
-     * -  'inventory' is at the bottom of the first column.
-     * -   The right column is stacked as requested.
-    */
+    grid-template-rows: 400px auto 1fr;
     grid-template-areas:
         "stats  visuals"
-        "stats  actions"
+        "inventory  actions"
         "inventory message";
 }
 
