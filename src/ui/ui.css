@@ -61,7 +61,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevents content from spilling out during animations/resizing */
+    overflow: visible; 
 }
 
 /* Assigning each panel to its grid area */
@@ -132,7 +132,8 @@ button.clickable:hover {
 @media (max-width: 800px) {
     .hud-container {
         grid-template-columns: 1fr;
-        grid-template-rows: auto;
+        grid-template-columns: 30% 70%;
+        grid-template-rows: 10% 10% 35%;
         grid-template-areas:
             "stats"
             "inventory"
