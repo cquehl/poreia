@@ -5,14 +5,15 @@ import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
 import { GameOverScene } from './scenes/GameOverScene';
 import { App } from './ui/App';
+// import { Colors } from './game/Colors'
 
 // Phaser game configuration
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 1000,
-    height: 700,
+    width: 1280,
+    height: 720,
     parent: 'game-container',
-    //backgroundColor: '#000000',
+    //backgroundColor: Colors.RED,
     transparent: true,
     scene: [MenuScene, GameScene, GameOverScene],
     scale: {
@@ -30,19 +31,3 @@ uiRoot.render(
     <App />
   </React.StrictMode>
 );
-
-// Global color definitions
-export const Colors = {
-    WHITE: 0xFFFFFF,
-    BLACK: 0x000000,
-    GRAY: 0x323232,
-    LIGHT_GRAY: 0x969696,
-    GREEN: 0x00C800,
-    DARK_GREEN: 0x006400,
-    RED: 0xC80000,
-    BLUE: 0x0000C8,
-    DARK_BLUE: 0x00008B,
-    DARKER_BLUE: 0x000061,
-    UI_BACKGROUND: 0x2a2a2a,
-    YELLOW: 0xFFFF00
-};

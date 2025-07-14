@@ -29,7 +29,7 @@ export const ActionsPanel: React.FC = () => {
 
     return (
         <div className="panel actions-panel">
-            <h3>Actions</h3>
+            {/* <h3>Actions</h3> */}
             <div className="actions-grid">
                 {Object.entries(availableActions).map(([name, props]) => {
                     if (props.required_item && !inventory[props.required_item]) {

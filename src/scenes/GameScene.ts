@@ -4,6 +4,7 @@ import { ENVIRONMENTS, getRandomActionQuantity, ActionProps } from '../game/Envi
 import { Logger } from '../game/Logger';
 import { EventManager } from '../game/EventManager';
 import { eventBus } from '../ui/EventBus';
+import { Colors } from '../game/Colors';
 
 const RESTRICTED_FROM_SCOUTING = ['Cave', 'Deserted Shack', 'Start'];
 
@@ -18,7 +19,7 @@ export class GameScene extends Phaser.Scene {
         Logger.info('GameScene creating...');
         eventBus.emit('viewChanged', 'hud');
 
-        this.add.graphics().fillStyle(0x1E501E, 1).fillRect(0, 0, this.scale.width, this.scale.height);
+        // this.add.graphics().fillStyle(Colors.RED, 1).fillRect(0, 0, this.scale.width, this.scale.height);
 
         this.player = new Player();
         this.player.initialize();
