@@ -111,6 +111,17 @@ body {
   white-space: pre-wrap;
 }
 
+.visuals-panel {
+    padding: 0;
+    overflow: hidden;
+}
+
+.visuals-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* --- Button Styles --- */
 button.clickable {
     background-color: #00008B;
