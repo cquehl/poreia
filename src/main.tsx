@@ -17,7 +17,8 @@ const config: Phaser.Types.Core.GameConfig = {
     transparent: true,
     scene: [MenuScene, GameScene, GameOverScene],
     scale: {
-        mode: Phaser.Scale.FIT,
+        // mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     }
 };
