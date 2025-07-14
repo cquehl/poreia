@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { MenuScene } from './scenes/MenuScene';
 import { GameScene } from './scenes/GameScene';
 import { GameOverScene } from './scenes/GameOverScene';
-import { App } from './ui/App'; // Import the new App component
+import { App } from './ui/App';
 
 // Phaser game configuration
 const config: Phaser.Types.Core.GameConfig = {
@@ -12,7 +12,8 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 1000,
     height: 700,
     parent: 'game-container',
-    backgroundColor: '#000000',
+    //backgroundColor: '#000000',
+    transparent: true,
     scene: [MenuScene, GameScene, GameOverScene],
     scale: {
         mode: Phaser.Scale.FIT,
@@ -26,7 +27,7 @@ const game = new Phaser.Game(config);
 const uiRoot = ReactDOM.createRoot(document.getElementById('ui-root')!);
 uiRoot.render(
   <React.StrictMode>
-    <App /> {/* Render the App component */}
+    <App />
   </React.StrictMode>
 );
 

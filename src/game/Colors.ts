@@ -1,0 +1,14 @@
+export const Colors = {
+    WHITE: 0xFFFFFF,
+    BLACK: 0x000000,
+    GRAY: 0x323232,
+    LIGHT_GRAY: 0x969696,
+    GREEN: 0x00C800,
+    DARK_GREEN: 0x006400,
+    RED: 0xC80000,
+    BLUE: 0x0000C8,
+    DARK_BLUE: 0x00008B,
+    DARKER_BLUE: 0x000061,
+    UI_BACKGROUND: 0x2a2a2a,
+    YELLOW: 0xFFFF00
+};
