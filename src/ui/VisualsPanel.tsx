@@ -1,7 +1,9 @@
+// src/ui/VisualsPanel.tsx
+
 import React, { useState, useEffect } from 'react';
 import { eventBus, Events } from './EventBus';
-// Import the "extra stuff" from the new visuals folder
-import { environmentImages } from './visuals/environmentImages'; 
+// 1. Import the new asset map.
+import { environmentImageAssets } from './visuals/imageAssets'; 
 
 export const VisualsPanel: React.FC = () => {
     const [environment, setEnvironment] = useState('Start');
@@ -18,8 +20,8 @@ export const VisualsPanel: React.FC = () => {
         };
     }, []);
 
-    // If a specific image exists use it, otherwise use the placeholder
-    const currentImage = environmentImages[environment] || environmentImages['Placeholder'];
+    // 2. Use the new asset map to get the correct, Vite-processed image path.
+    const currentImage = environmentImageAssets[environment] || environmentImageAssets['Placeholder'];
 
     return (
         <div className="panel visuals-panel">
